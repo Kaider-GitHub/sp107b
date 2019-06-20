@@ -35,7 +35,7 @@ char *scan() {
   return token;
 }
 
-void lex(char *code) {
+int lex(char *code) {
   printf("========== lex ==============\n");
   p = code;
   tokenTop = 0;

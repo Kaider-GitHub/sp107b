@@ -5,6 +5,9 @@
 
 int tokenIdx = 0;
 char *tokens;
+int T();
+int E();
+int F();
 
 void error(char *msg) {
   printf("%s", msg);
@@ -53,6 +56,34 @@ void genOp2(int i, int i1, char op, int i2) {
   printf("M=D\n");
 }
 
+
+// T = F ([*/]F)*
+int T() {
+  int f1 = F();
+  while (isNext("*/")) {
+    char op=next();
+    int f2 = F();
+    int f = nextTemp();
+    genOp2(f, f1, op, f2);
+    f1 = f;
+  }
+  return f1;
+}
+
+
+// E = F ([+-] F)*
+int E() {
+  int i1 = T();
+  while (isNext("+-")) {
+    char op=next();
+    int i2 = T();
+    int i = nextTemp();
+    genOp2(i, i1, op, i2);
+    i1 = i;
+  }
+  return i1;
+}
+
 // F =  Number | '(' E ')'
 int F() {
   int f;
@@ -69,42 +100,18 @@ int F() {
   return f; 
 }
 
-// E = F ([+-] F)*
-int E() {
-  int i1 = T();
-  while (isNext("+-")) {
-    char op=next();
-    int i2 = T();
-    int i = nextTemp();
-    genOp2(i, i1, op, i2);
-    i1 = i;
-  }
-  return i1;
-}
 
-// T = F ([*/]F)*
-int T() {
-  int f1 = F();
-  while (isNext("*/")) {
-    char op=next();
-    int f2 = F();
-    int f = nextTemp();
-    genOp2(f, f1, op, f2);
-    f1 = f;
-  }
-  return f1;
-}
 
 void parse(char *str) {
   tokens = str;
   E();
 }
 
-int main(int argc, char * argv[]) {
-  printf("=== EBNF Grammar =====\n");
-  printf("E=F ([+-] F)*\n");
-  printf("T=F ([*/] F)*\n");
-  printf("F=Number | '(' E ')'\n");
-  printf("==== parse:%s ========\n", argv[1]);
-  parse(argv[1]);
-}
+// int main(int argc, char * argv[]) {
+//   printf("=== EBNF Grammar =====\n");
+//   printf("E=F ([+-] F)*\n");
+//   printf("T=F ([*/] F)*\n");
+//   printf("F=Number | '(' E ')'\n");
+//   printf("==== parse:%s ========\n", argv[1]);
+//   parse(argv[1]);
+// }
